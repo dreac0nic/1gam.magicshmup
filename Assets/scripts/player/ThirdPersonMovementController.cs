@@ -68,6 +68,13 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public void FixedUpdate()
 	{
 		RaycastHit hit_info;
+		Vector3 bias_forward = Vector3.forward;
+		Vector3 bias_right = Vector3.right;
+
+		if(CameraBias) {
+			bias_forward = Vector3.ProjectOnPlane(CameraBias.forward, Vector3.up).normalized;
+			bias_right = Vector3.ProjectOnPlane(CameraBias.right, Vector3.up).normalized;
+		}
 
 		// Perform ground check
 		if(Physics.SphereCast(GroundCheckStart.position, GroundCheckRadius, GroundCheckDirection, out hit_info, (0.5f*m_Collider.height - GroundCheckRadius) + GroundCheckDistance)) {
@@ -85,7 +92,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 		// Calculate movement base on last polled inputs.
 		if(m_MovementInput.sqrMagnitude > float.Epsilon && (HasPassedGroundCheck || AerialControl)) {
 			float time_acceleration = Acceleration*Time.deltaTime;
-			Vector3 movement = Vector3.ClampMagnitude(m_MovementInput.y*Vector3.forward + m_MovementInput.x*Vector3.right, 1.0f);
+			Vector3 movement = Vector3.ClampMagnitude(m_MovementInput.y*bias_forward + m_MovementInput.x*bias_right, 1.0f);
 			Vector3 delta_velocity = MaximumVelocity*Vector3.ProjectOnPlane(movement, m_GroundNormal) - m_Rigidbody.velocity;
 
 			delta_velocity = Mathf.Clamp(delta_velocity.magnitude, -time_acceleration, time_acceleration)*delta_velocity;
