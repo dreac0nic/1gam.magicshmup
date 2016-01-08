@@ -27,7 +27,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 
 	// External player references
 	private Rigidbody m_Rigidbody;
-	private Collider m_Collider;
+	private CapsuleCollider m_Collider;
 
 	protected bool m_HasPassedGroundCheck = false;
 	protected float m_GhostingTimeout;
