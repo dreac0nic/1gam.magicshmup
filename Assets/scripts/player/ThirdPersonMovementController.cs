@@ -1,12 +1,13 @@
 using System.Collections;
 ﻿using UnityEngine;
+﻿using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ThirdPersonMovementController : MonoBehaviour
 {
 	[Header("Movement")]
 	public Transform CameraBias;
-	public float MaximumVelocity = 15.0f;
+	public float MaximumVelocity = 7.5f;
 	public float Acceleration = 20.0f;
 	public bool AerialControl = false;
 	public float AerialMovementModifier = 0.125f;
@@ -25,6 +26,9 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public string ForwardAxis = "Vertical";
 	public string SideAxis = "Horizontal";
 
+	[Header("Debug Values")]
+	public Text DebugText;
+
 	// External player references
 	private Rigidbody m_Rigidbody;
 	private CapsuleCollider m_Collider;
@@ -34,7 +38,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 	protected Vector2 m_MovementInput;
 	protected Vector3 m_GroundNormal;
 
-	public bool IsGrounded { get { return m_HasPassedGroundCheck || (EnableGhosting && Time.time >= m_GhostingTimeout); } }
+	public bool IsGrounded { get { return m_HasPassedGroundCheck || (EnableGhosting && Time.time < m_GhostingTimeout); } }
 	public bool HasPassedGroundCheck { get { return m_HasPassedGroundCheck; } }
 
 	public void Awake()
@@ -55,23 +59,42 @@ public class ThirdPersonMovementController : MonoBehaviour
 	{
 		// Poll for current input
 		m_MovementInput = new Vector2(Input.GetAxis(SideAxis), Input.GetAxis(ForwardAxis));
+
+		if(DebugText) {
+			DebugText.text = "Player Grounded: " + IsGrounded + "; " + HasPassedGroundCheck + ", " + (EnableGhosting && Time.time < m_GhostingTimeout);
+		}
 	}
 
 	public void FixedUpdate()
 	{
 		RaycastHit hit_info;
 
-		// Perform ground check to test.
+		// Perform ground check
 		if(Physics.SphereCast(GroundCheckStart.position, GroundCheckRadius, GroundCheckDirection, out hit_info, (0.5f*m_Collider.height - GroundCheckRadius) + GroundCheckDistance)) {
 			if(!m_HasPassedGroundCheck) {
 				m_HasPassedGroundCheck = true;
 			}
 
 			m_GroundNormal = hit_info.normal;
-		} else if(!m_HasPassedGroundCheck) {
+		} else if(m_HasPassedGroundCheck) {
 			m_HasPassedGroundCheck = false;
 			m_GroundNormal = Vector3.up;
 			m_GhostingTimeout = Time.time + GhostingDuration;
+		}
+
+		// Calculate movement base on last polled inputs.
+		if(m_MovementInput.sqrMagnitude > float.Epsilon && (HasPassedGroundCheck || AerialControl)) {
+			float time_acceleration = Acceleration*Time.deltaTime;
+			Vector3 movement = Vector3.ClampMagnitude(m_MovementInput.y*Vector3.forward + m_MovementInput.x*Vector3.right, 1.0f);
+			Vector3 delta_velocity = MaximumVelocity*Vector3.ProjectOnPlane(movement, m_GroundNormal) - m_Rigidbody.velocity;
+
+			delta_velocity = Mathf.Clamp(delta_velocity.magnitude, -time_acceleration, time_acceleration)*delta_velocity;
+
+			if(!HasPassedGroundCheck) {
+				delta_velocity *= AerialMovementModifier;
+			}
+
+			m_Rigidbody.AddForce(delta_velocity, ForceMode.VelocityChange);
 		}
 	}
 }
