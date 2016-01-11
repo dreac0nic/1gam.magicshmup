@@ -4,8 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class RotateToVelocity : MonoBehaviour
 {
-	public bool SmoothTransition = false;
-	public float SmoothingSpeed = 10.0f;
+	public float Speed = 10.0f;
 
 	protected Rigidbody m_Body;
 
@@ -20,9 +19,7 @@ public class RotateToVelocity : MonoBehaviour
 			Vector3 look_direction = Vector3.ProjectOnPlane(m_Body.velocity, Vector3.up).normalized;
 
 			if(look_direction.sqrMagnitude > float.Epsilon) {
-				Quaternion look_rotation = Quaternion.LookRotation(look_direction);
-
-				transform.rotation = (SmoothTransition ? Quaternion.Slerp(transform.rotation, look_rotation, SmoothingSpeed*Time.deltaTime) : look_rotation);
+				this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(look_direction), Speed*Time.deltaTime);
 			}
 		}
 	}
