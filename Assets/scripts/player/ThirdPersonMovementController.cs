@@ -26,9 +26,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public string ForwardAxis = "Vertical";
 	public string SideAxis = "Horizontal";
 
-	[Header("Debug Values")]
-	public Text DebugText;
-
 	// External player references
 	private Rigidbody m_Rigidbody;
 	private CapsuleCollider m_Collider;
