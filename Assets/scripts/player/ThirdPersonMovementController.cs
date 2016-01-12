@@ -36,12 +36,14 @@ public class ThirdPersonMovementController : MonoBehaviour
 	protected bool m_HasPassedGroundCheck;
 	protected float m_GhostingTimeout;
 	protected float m_LandingTime;
+	protected float m_LaunchTime;
 	protected Vector2 m_MovementInput;
 	protected Vector3 m_GroundNormal;
 
 	public bool IsGrounded { get { return m_HasPassedGroundCheck || (EnableGhosting && Time.time < m_GhostingTimeout); } }
 	public bool HasPassedGroundCheck { get { return m_HasPassedGroundCheck; } }
 	public float LandingTime { get { return m_LandingTime; } }
+	public float LaunchTime { get { return m_LaunchTime; } }
 	public Vector3 GroundNormal { get { return m_GroundNormal; } }
 
 	public void Awake()
@@ -62,10 +64,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	{
 		// Poll for current input
 		m_MovementInput = new Vector2(Input.GetAxis(SideAxis), Input.GetAxis(ForwardAxis));
-
-		if(DebugText) {
-			DebugText.text = "Player Grounded: " + IsGrounded + "; " + HasPassedGroundCheck + ", " + (EnableGhosting && Time.time < m_GhostingTimeout);
-		}
 	}
 
 	public void FixedUpdate()
@@ -88,6 +86,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 
 			m_GroundNormal = hit_info.normal;
 		} else if(m_HasPassedGroundCheck) {
+			m_LaunchTime = Time.time;
 			m_HasPassedGroundCheck = false;
 			m_GroundNormal = Vector3.up;
 			m_GhostingTimeout = Time.time + GhostingDuration;
