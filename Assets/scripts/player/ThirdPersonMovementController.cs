@@ -45,6 +45,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 
 	public bool IsGrounded { get { return m_HasPassedGroundCheck || (EnableGhosting && Time.time < m_GhostingTimeout); } }
 	public bool HasPassedGroundCheck { get { return m_HasPassedGroundCheck; } }
+	public Vector3 GroundNormal { get { return m_GroundNormal; } }
 
 	public void Awake()
 	{
