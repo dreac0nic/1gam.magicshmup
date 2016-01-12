@@ -25,7 +25,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	[Header("Input Names")]
 	public string ForwardAxis = "Vertical";
 	public string SideAxis = "Horizontal";
-	public string JumpInput = "Jump";
 
 	[Header("Debug Values")]
 	public Text DebugText;
