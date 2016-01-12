@@ -11,8 +11,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public float Acceleration = 20.0f;
 	public bool AerialControl = false;
 	public float AerialMovementModifier = 0.125f;
-	public int NumberOfJumps = 1;
-	public float JumpForce = 20.0f;
 
 	[Header("Ground Check")]
 	public Transform GroundCheckStart;
@@ -37,8 +35,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	private CapsuleCollider m_Collider;
 
 	protected bool m_HasPassedGroundCheck;
-	protected bool m_JumpInput;
-	protected int m_JumpCount;
 	protected float m_GhostingTimeout;
 	protected Vector2 m_MovementInput;
 	protected Vector3 m_GroundNormal;
@@ -64,7 +60,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public void Update()
 	{
 		// Poll for current input
-		m_JumpInput = Input.GetButton(JumpInput);
 		m_MovementInput = new Vector2(Input.GetAxis(SideAxis), Input.GetAxis(ForwardAxis));
 
 		if(DebugText) {
@@ -87,7 +82,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 		if(Physics.SphereCast(GroundCheckStart.position, GroundCheckRadius, GroundCheckDirection, out hit_info, (0.5f*m_Collider.height - GroundCheckRadius) + GroundCheckDistance)) {
 			if(!m_HasPassedGroundCheck) {
 				m_HasPassedGroundCheck = true;
-				m_JumpCount = 0;
 			}
 
 			m_GroundNormal = hit_info.normal;
@@ -95,26 +89,6 @@ public class ThirdPersonMovementController : MonoBehaviour
 			m_HasPassedGroundCheck = false;
 			m_GroundNormal = Vector3.up;
 			m_GhostingTimeout = Time.time + GhostingDuration;
-		}
-
-		// J - U - M - P
-		// NOTE: MULTIJUMP HAPPENS INSTANTLY, CAN JUMP IN MID-AIR WITH ONLY ONE JUMP
-		if(m_JumpInput && ((m_JumpCount == 0 && IsGrounded) || m_JumpCount < NumberOfJumps)) {
-			Vector3 jump_direction = this.transform.TransformDirection(Vector3.up);
-			m_JumpCount++;
-
-			Debug.Log("Jump!");
-
-			// XXX: Cancel out gravity if we're jumping off-ground.
-			if(!HasPassedGroundCheck) {
-				Vector3 rb_velocity = m_Rigidbody.velocity; // TODO: Make velocity for gravity in direction of gravity?
-				rb_velocity.y = 0.0f;
-
-				m_Rigidbody.velocity = rb_velocity;
-				jump_direction = m_GroundNormal;
-			}
-
-			m_Rigidbody.AddForce(JumpForce*jump_direction, ForceMode.Impulse); // NOTE: Why not take mass into account? Seems reasonable.
 		}
 
 		// Calculate movement base on last polled inputs.
