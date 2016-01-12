@@ -36,11 +36,13 @@ public class ThirdPersonMovementController : MonoBehaviour
 
 	protected bool m_HasPassedGroundCheck;
 	protected float m_GhostingTimeout;
+	protected float m_LandingTime;
 	protected Vector2 m_MovementInput;
 	protected Vector3 m_GroundNormal;
 
 	public bool IsGrounded { get { return m_HasPassedGroundCheck || (EnableGhosting && Time.time < m_GhostingTimeout); } }
 	public bool HasPassedGroundCheck { get { return m_HasPassedGroundCheck; } }
+	public float LandingTime { get { return m_LandingTime; } }
 	public Vector3 GroundNormal { get { return m_GroundNormal; } }
 
 	public void Awake()
@@ -82,6 +84,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 		if(Physics.SphereCast(GroundCheckStart.position, GroundCheckRadius, GroundCheckDirection, out hit_info, (0.5f*m_Collider.height - GroundCheckRadius) + GroundCheckDistance)) {
 			if(!m_HasPassedGroundCheck) {
 				m_HasPassedGroundCheck = true;
+				m_LandingTime = Time.time;
 			}
 
 			m_GroundNormal = hit_info.normal;

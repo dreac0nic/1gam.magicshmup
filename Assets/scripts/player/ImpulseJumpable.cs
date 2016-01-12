@@ -6,7 +6,8 @@ using System.Collections;
 public class ImpulseJumpable : MonoBehaviour
 {
 	public float JumpForce = 7.5f;
-	public float JumpCooldown = 0.5f;
+	public float JumpCooldown = 0.25f;
+	public float LandingCooldown = 0.3f;
 	public string JumpInput = "Jump";
 
 	protected ThirdPersonMovementController m_Player;
@@ -28,7 +29,7 @@ public class ImpulseJumpable : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		if(m_JumpInput && m_Player.IsGrounded && Time.time >= m_JumpTimeout) {
+		if(m_JumpInput && m_Player.IsGrounded && Time.time >= m_JumpTimeout && Time.time >= m_Player.LandingTime + LandingCooldown) {
 			Vector3 jump_direction = this.transform.TransformDirection(Vector3.up);
 
 			// XXX: Cancel out gravity if we're jumping without ground below us!
