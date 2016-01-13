@@ -14,7 +14,7 @@ public class Living : MonoBehaviour
 	public void Update()
 	{
 		if(m_Health > MaximumHealth) {
-			m_Health -= Mathf.Clamp(m_Health - MaximumHealth, 0.0f, HealthCooldownSpeed);
+			m_Health -= Mathf.Clamp(m_Health - MaximumHealth, 0.0f, HealthCooldownSpeed*Time.deltaTime);
 		}
 	}
 

@@ -10,7 +10,7 @@ public class MedkitTarget : FireTargetBase
 		Living living_entity = offender.GetComponentInChildren<Living>();
 
 		if(living_entity && living_entity.IsAlive) {
-			living_entity.ApplyDamage(-1*HealthStrength);
+			living_entity.ApplyDamage(-1*HealthStrength); // XXX: NOT A GREAT WAY TO HEAL
 			Destroy(this.gameObject);
 		}
 	}
