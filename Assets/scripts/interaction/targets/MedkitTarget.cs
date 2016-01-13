@@ -9,9 +9,9 @@ public class MedkitTarget : FireTargetBase
 	{
 		Living living_entity = offender.GetComponentInChildren<Living>();
 
-		if(living_entity.IsAlive) {
+		if(living_entity && living_entity.IsAlive) {
 			living_entity.ApplyDamage(-1*HealthStrength);
-			Destroy(this);
+			Destroy(this.gameObject);
 		}
 	}
 }
