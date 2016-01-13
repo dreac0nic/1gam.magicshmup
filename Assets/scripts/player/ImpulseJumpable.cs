@@ -42,7 +42,7 @@ public class ImpulseJumpable : MonoBehaviour
 			}
 
 			m_JumpTimeout = Time.time + JumpCooldown;
-			m_Rigidbody.AddForce(JumpForce*jump_direction, ForceMode.Impulse); // NOTE: Impulse? Why not just a normal force? Seems to make sense. Insert argument for mass-based movement principles...?
+			m_Rigidbody.AddForce(JumpForce*jump_direction, ForceMode.Impulse);
 		}
 	}
 }
