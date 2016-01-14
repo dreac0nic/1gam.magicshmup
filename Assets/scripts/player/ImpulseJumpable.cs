@@ -10,8 +10,9 @@ public class ImpulseJumpable : MonoBehaviour
 	public float LandingCooldown = 0.3f;
 	public string JumpInput = "Jump";
 
-	protected ThirdPersonMovementController m_Player;
-	protected Rigidbody m_Rigidbody;
+	private ThirdPersonMovementController m_Player;
+	private Rigidbody m_Rigidbody;
+	private Living m_PlayerHealth;
 
 	protected bool m_JumpInput;
 	protected float m_JumpTimeout;
@@ -20,11 +21,14 @@ public class ImpulseJumpable : MonoBehaviour
 	{
 		m_Player = this.GetComponent<ThirdPersonMovementController>();
 		m_Rigidbody = this.GetComponent<Rigidbody>();
+		m_PlayerHealth = this.GetComponent<Living>();
 	}
 
 	public void Update()
 	{
-		m_JumpInput = Input.GetButton(JumpInput);
+		if(!m_PlayerHealth || m_PlayerHealth.IsAlive) {
+			m_JumpInput = Input.GetButton(JumpInput);
+		}
 	}
 
 	public void FixedUpdate()

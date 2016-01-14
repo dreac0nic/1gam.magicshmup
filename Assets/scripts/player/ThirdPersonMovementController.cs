@@ -29,6 +29,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 	// External player references
 	private Rigidbody m_Rigidbody;
 	private CapsuleCollider m_Collider;
+	private Living m_PlayerHealth;
 
 	protected bool m_HasPassedGroundCheck;
 	protected float m_GhostingTimeout;
@@ -47,6 +48,7 @@ public class ThirdPersonMovementController : MonoBehaviour
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
 		m_Collider = GetComponent<CapsuleCollider>();
+		m_PlayerHealth = GetComponent<Living>();
 
 		if(!GroundCheckStart) {
 			GroundCheckStart = transform;
@@ -60,7 +62,11 @@ public class ThirdPersonMovementController : MonoBehaviour
 	public void Update()
 	{
 		// Poll for current input
-		m_MovementInput = new Vector2(Input.GetAxis(SideAxis), Input.GetAxis(ForwardAxis));
+		if(!m_PlayerHealth || m_PlayerHealth.IsAlive) {
+			m_MovementInput = new Vector2(Input.GetAxis(SideAxis), Input.GetAxis(ForwardAxis));
+		} else {
+			m_MovementInput = Vector2.zero;
+		}
 	}
 
 	public void FixedUpdate()
