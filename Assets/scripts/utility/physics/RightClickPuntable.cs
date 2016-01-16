@@ -37,7 +37,7 @@ public class RightClickPuntable : MonoBehaviour
 				RightClickPuntable target = hit_info.collider.GetComponentInParent<RightClickPuntable>();
 
 				if(target && target == this) {
-					m_Body.AddForceAtPosition(PuntStrength*(RayDirection ? ray.direction : -1*hit_info.normal), hit_info.point);
+					m_Body.AddForceAtPosition(PuntStrength*(RayDirection ? ray.direction : -1*hit_info.normal), hit_info.point, ForceMode.Impulse);
 				}
 			}
 		}
