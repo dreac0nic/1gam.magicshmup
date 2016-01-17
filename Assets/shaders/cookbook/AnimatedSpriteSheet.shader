@@ -25,7 +25,7 @@
 			float2 uv_MainTex;
 		};
 
-		void surf (Input IN, inout SurfaceOutputStandard o) {
+		void surf (Input IN, inout SurfaceOutput o) {
 			float cellPixelWidth = _TexWidth/_CellCount;
 			float cellUVPercentage = cellPixelWidth/_TexWidth;
 			float2 spriteUV = IN.uv_MainTex;
